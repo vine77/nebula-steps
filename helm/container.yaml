@@ -1,0 +1,6 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: ../hack/defs/helm
+title: Helm
+description: >
+  This task runs Helm against a given Kubernetes cluster.

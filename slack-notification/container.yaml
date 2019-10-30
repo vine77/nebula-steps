@@ -1,0 +1,7 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: {from: sdk, name: go.v1}
+title: Slack notification
+description: The Slack notification task sends a message to a Slack channel.
+settings:
+  CommandPath: cmd/nebula-slack-notification

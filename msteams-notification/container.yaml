@@ -1,0 +1,7 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: {from: sdk, name: bash.v1}
+title: Microsoft Teams notification
+description: >
+  The Microsoft Teams notification task sends a markdown-formatted message to
+  Microsoft Teams via an Actionable Message incoming webhook connector.

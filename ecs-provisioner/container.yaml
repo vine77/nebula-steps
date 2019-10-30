@@ -1,0 +1,6 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: ../hack/defs/aws-ecs
+title: AWS ECS provisioner
+description: >
+  The ECS provisioner task provisions ECS clusters in AWS.

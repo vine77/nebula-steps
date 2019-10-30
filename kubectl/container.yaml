@@ -1,0 +1,6 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: ../hack/defs/kubectl
+title: kubectl
+description: >
+  The Kubectl step task allows general kubectl use and can take kubectl commands.

@@ -1,0 +1,7 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: ../hack/defs/aws-ecs
+title: AWS ECS deployer
+description: >
+  The ECS deployer task deploys containers to Elastic Container Service (ECS)
+  clusters in AWS.

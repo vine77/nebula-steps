@@ -1,0 +1,13 @@
+apiVersion: container/v1
+kind: StepContainer
+title: Kaniko
+description: >
+  The Kaniko task runs the Kaniko image builder.
+sdkVersion: v1
+images:
+  base:
+    template: Dockerfile.tpl
+  # standalone:
+  #   template: {from: sdk, name: bash.v1/Dockerfile.standalone.tpl}
+  #   dependsOn:
+  #   - base

@@ -1,0 +1,16 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: {from: sdk, name: go.v1}
+settings:
+  CommandPath: cmd/nebula-k8s-provisioner
+  AdditionalCommands:
+  - |
+    set -eux
+    mkdir -p /tmp/kops && \
+      cd /tmp/kops && \
+      wget -q https://github.com/kubernetes/kops/releases/download/1.14.0/kops-linux-amd64 && \
+      echo "$( wget -q -O - https://github.com/kubernetes/kops/releases/download/1.14.0/kops-linux-amd64-sha1 )  kops-linux-amd64" | sha1sum -c - && \
+      chmod +x kops-linux-amd64 && \
+      mv kops-linux-amd64 /usr/local/bin/kops && \
+      cd - && \
+      rm -fr /tmp/kops

@@ -1,0 +1,26 @@
+services:
+- docker
+language: go
+go:
+- 1.13.x
+cache:
+  directories:
+  - "${GOPATH}/pkg/mod"
+  - "${GOPATH}/pkg/sumdb"
+env:
+  global:
+  - GO111MODULE=on
+  - GOFLAGS="${GOFLAGS} -mod=readonly"
+  - DOCKER_USERNAME=projectnebulaautomation
+  - secure: bfPZgl4+plBsY3SMPPR7c9JBX0nOiU126awTffj2MVAcfz2c5EvHbAnYmGkEtIqm+AC7mR/vdKNOLIXrvFfB3MDEihLCmPp+Ny5oNQ2NItUrMb4PUJJKnTw2K+n8F9zf6Xv9LYfQn/11wNDoAyDFNa/rIpAiFynXdJ/+hnp/kGMXmJlZM+dCOWlMYndjIRq0gCkyBAaS9AfJPJ59xT6rGWJx9C8GC6ir8MUHZAaxslFi+56jAyO6rc5oSxiNrEEEaUOPHXL6FpO9JduW17eFuGPRr3uXw07UFXoFNQBRNovUVU9QOZyHW79a5D+QAu/Cl/VZ2CFy2ypHslVhx/F+IuIuoksEmOdj5TVyeoMdQMujTHnubWJEbDkFXhfuZXs45BzKTgx0DhA5bZxTkdova7UgAhYvIcS9fUEnfpCbzYwgeN7khVAn2lr2tAR5ew+oNrNPNwLRH1mz7Rwx0LgRGqXbRJW1WaA4V+sLHlhnCKytru5xCS/lPtxWACT4UTODP2v1bidIN7+CVn4X2/lN6NBaxvK7rMX3M26EnZ/8DPtNIEJTxDeuK2SazKHV1imvw+nujU7xZbCQo3hCopiCST0GDEeuk79FiBnA79RD4+I3AhdmbO5LiUpiP8vN5lA07oXCVJs+dlpMKuqwjGTFnBCpOib9W7VJse2qDpY8+a4=
+jobs:
+  include:
+  - stage: build
+    install:
+    - set -e
+    - echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+    script:
+    - set -e
+    - scripts/ci scripts/generate
+    - scripts/ci scripts/build-all
+    - scripts/ci scripts/release-all

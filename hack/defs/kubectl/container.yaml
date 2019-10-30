@@ -1,0 +1,15 @@
+apiVersion: container/v1
+kind: StepContainerTemplate
+inherit: {from: sdk, name: bash.v1}
+settings:
+  AdditionalCommands:
+  - |
+    set -eux
+    mkdir -p /tmp/kubectl && \
+      cd /tmp/kubectl && \
+      curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/linux/amd64/kubectl && \
+      echo "$( curl -sL https://storage.googleapis.com/kubernetes-release/release/v1.16.0/bin/linux/amd64/kubectl.sha256 )  kubectl" | sha256sum -c - && \
+      chmod +x kubectl && \
+      mv kubectl /usr/local/bin/kubectl && \
+      cd - && \
+      rm -fr /tmp/kubectl

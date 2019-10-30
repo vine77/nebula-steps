@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+. scripts/library.sh
+
+[[ "$#" -eq 1 ]] || nebula::steps::usage "$0 <step-dir>"
+
+if [ ! -d "$1" ]; then
+  echo "$0: step directory \`$1\` does not exist"
+  exit 2
+fi
+
+cd "$1"
+
+# Delegate to child build script, if it exists.
+if [ -x scripts/build ]; then
+  exec scripts/build
+fi
+
+# Otherwise we'll use the standard build-container script.
+if [ ! -x scripts/build-container ]; then
+  echo "$0: build script \`$1/scripts/build-container\` cannot be executed (have you run \`scripts/generate\`?)" >&2
+  exit 2
+fi
+
+declare -a BUILD_CONTAINER_ARGS
+
+for BUILD_TAG in ${BUILD_TAGS-}; do
+  BUILD_CONTAINER_ARGS+=( -t "${BUILD_TAG}" )
+done
+
+exec scripts/build-container "${BUILD_CONTAINER_ARGS[@]}"

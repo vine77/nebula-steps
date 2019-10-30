@@ -1,0 +1,6 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: ../hack/defs/kubectl
+title: Kustomize
+description: >
+  The Kustomize task applies Kubernetes kustomizations.

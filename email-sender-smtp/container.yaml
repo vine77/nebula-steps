@@ -1,0 +1,8 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: {from: sdk, name: go.v1}
+title: SMTP email sender
+description: >
+  The SMTP email sender task sends an email using SMTP.
+settings:
+  CommandPath: cmd/nebula-email-sender-smtp

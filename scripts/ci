@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${TRAVIS_BRANCH-}" == "master" ]]; then
+  export BUILD_TAGS="${BUILD_TAGS-} latest"
+fi
+
+exec "$@"

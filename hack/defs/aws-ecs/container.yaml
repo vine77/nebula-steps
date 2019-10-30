@@ -1,0 +1,15 @@
+apiVersion: container/v1
+kind: StepContainerTemplate
+inherit: {from: sdk, name: bash.v1}
+settings:
+  AdditionalCommands:
+  - |
+    set -eux
+    mkdir -p /tmp/ecs-cli && \
+      cd /tmp/ecs-cli && \
+      curl -L -o ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest && \
+      echo "$( curl -sL https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest.md5 )  ecs-cli" | md5sum -c - && \
+      chmod +x ecs-cli && \
+      mv ecs-cli /usr/local/bin/ecs-cli && \
+      cd - && \
+      rm -fr /tmp/ecs-cli

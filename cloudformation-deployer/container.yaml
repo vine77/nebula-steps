@@ -1,0 +1,7 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: ../hack/defs/aws
+title: AWS CloudFormation deployer
+description: >
+  The AWS CloudFormation deployer task creates or updates a CloudFormation stack
+  using a provided template.

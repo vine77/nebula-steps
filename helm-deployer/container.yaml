@@ -1,0 +1,6 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: ../hack/defs/helm
+title: Helm deployer
+description: >
+  The Helm deployer task deploys a Helm chart to a Kubernetes cluster.

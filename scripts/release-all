@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DOCKER="${DOCKER:-docker}"
+
+while IFS= read IMAGE; do
+  echo "# release: ${IMAGE}"
+  $DOCKER push $IMAGE
+done < <(
+  $DOCKER image ls \
+    --filter=label=com.puppet.nebula.sdk.version \
+    --filter=reference='projectnebula/*' \
+    --format='{{ .Repository }}:{{ .Tag }}' )

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+. scripts/library.sh
+
+while IFS= read STEPDIR; do
+  echo "# build: ${STEPDIR}"
+  scripts/build "${STEPDIR}"
+done < <( nebula::steps::step_dirs )

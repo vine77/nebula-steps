@@ -1,0 +1,9 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: {from: sdk, name: bash.v1}
+title: Jenkins job runner
+description: >
+  The Jenkins job runner task runs a parameterized build on a Jenkins instance.
+settings:
+  AdditionalPackages:
+  - xmlstarlet

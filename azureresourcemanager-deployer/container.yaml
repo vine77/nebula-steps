@@ -1,0 +1,7 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: ../hack/defs/azure
+title: Azure Resource Manager deployer
+description: >
+  A task that deploys (creates or updates) an Azure Resource Manager deployment
+  using a provided template.

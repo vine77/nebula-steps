@@ -1,0 +1,7 @@
+apiVersion: container/v1
+kind: StepContainerTemplate
+inherit: {from: sdk, name: bash.v1}
+settings:
+  Image: python:3-alpine
+  AdditionalCommands:
+  - pip install awscli
