@@ -29,4 +29,4 @@ for BUILD_TAG in ${BUILD_TAGS-}; do
   BUILD_CONTAINER_ARGS+=( -t "${BUILD_TAG}" )
 done
 
-exec scripts/build-container "${BUILD_CONTAINER_ARGS[@]}"
+exec scripts/build-container ${BUILD_CONTAINER_ARGS[@]+"${BUILD_CONTAINER_ARGS[@]}"}

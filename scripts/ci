@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ "${TRAVIS_BRANCH-}" == "master" ]]; then
+if [[ "${TRAVIS_PULL_REQUEST-}" == "false" ]] && [[ "${TRAVIS_BRANCH-}" == "master" ]]; then
+  echo "# ci: release latest"
   export BUILD_TAGS="${BUILD_TAGS-} latest"
 fi
 
