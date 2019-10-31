@@ -38,9 +38,9 @@ done
 shift $(( OPTIND - 1 ))
 
 
-$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/975e2a012c38/msteams-notification --file Dockerfile .
+$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/36849dbea0a2/msteams-notification --file Dockerfile .
 
 for TAG in ${TAGS[@]+"${TAGS[@]}"}; do
-  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/975e2a012c38/msteams-notification "projectnebula/msteams-notification:${TAG}" && \
+  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/36849dbea0a2/msteams-notification "projectnebula/msteams-notification:${TAG}" && \
     printf "# Tagged %s:%s\n" projectnebula/msteams-notification "${TAG}"
 done

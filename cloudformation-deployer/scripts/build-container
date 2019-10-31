@@ -38,9 +38,9 @@ done
 shift $(( OPTIND - 1 ))
 
 
-$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/811677e89acd/cloudformation-deployer --file Dockerfile .
+$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/0e89a0cede0a/cloudformation-deployer --file Dockerfile .
 
 for TAG in ${TAGS[@]+"${TAGS[@]}"}; do
-  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/811677e89acd/cloudformation-deployer "projectnebula/cloudformation-deployer:${TAG}" && \
+  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/0e89a0cede0a/cloudformation-deployer "projectnebula/cloudformation-deployer:${TAG}" && \
     printf "# Tagged %s:%s\n" projectnebula/cloudformation-deployer "${TAG}"
 done

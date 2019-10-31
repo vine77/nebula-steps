@@ -14,6 +14,7 @@ RUN set -eux ; \
 RUN apk --no-cache add bash ca-certificates curl git jq openssh && update-ca-certificates
 RUN ["/bin/bash", "-c", "pip install awscli"]
 COPY "./step.sh" "/nebula/step-cloudformation-deployer.sh"
+ENTRYPOINT []
 CMD ["/bin/bash", "/nebula/step-cloudformation-deployer.sh"]
 
 LABEL "org.opencontainers.image.title"="AWS CloudFormation deployer"

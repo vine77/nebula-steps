@@ -14,6 +14,7 @@ RUN set -eux ; \
 RUN apk --no-cache add bash ca-certificates curl git jq openssh && update-ca-certificates
 RUN ["/bin/bash", "-c", "set -eux\nmkdir -p /tmp/ecs-cli \u0026\u0026 \\\n  cd /tmp/ecs-cli \u0026\u0026 \\\n  curl -L -o ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest \u0026\u0026 \\\n  echo \"$( curl -sL https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest.md5 )  ecs-cli\" | md5sum -c - \u0026\u0026 \\\n  chmod +x ecs-cli \u0026\u0026 \\\n  mv ecs-cli /usr/local/bin/ecs-cli \u0026\u0026 \\\n  cd - \u0026\u0026 \\\n  rm -fr /tmp/ecs-cli\n"]
 COPY "./step.sh" "/nebula/step-ecs-deployer.sh"
+ENTRYPOINT []
 CMD ["/bin/bash", "/nebula/step-ecs-deployer.sh"]
 
 LABEL "org.opencontainers.image.title"="AWS ECS deployer"

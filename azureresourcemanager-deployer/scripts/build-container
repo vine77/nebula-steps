@@ -38,9 +38,9 @@ done
 shift $(( OPTIND - 1 ))
 
 
-$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/bc8f4003fd96/azureresourcemanager-deployer --file Dockerfile .
+$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/9a2f73078373/azureresourcemanager-deployer --file Dockerfile .
 
 for TAG in ${TAGS[@]+"${TAGS[@]}"}; do
-  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/bc8f4003fd96/azureresourcemanager-deployer "projectnebula/azureresourcemanager-deployer:${TAG}" && \
+  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/9a2f73078373/azureresourcemanager-deployer "projectnebula/azureresourcemanager-deployer:${TAG}" && \
     printf "# Tagged %s:%s\n" projectnebula/azureresourcemanager-deployer "${TAG}"
 done

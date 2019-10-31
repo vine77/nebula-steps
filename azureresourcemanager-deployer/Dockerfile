@@ -14,6 +14,7 @@ RUN set -eux ; \
 RUN apk --no-cache add bash ca-certificates curl git jq openssh && update-ca-certificates
 RUN ["/bin/bash", "-c", "apk --no-cache add --virtual=nebula-azure-build-deps \\\n    gcc \\\n    musl-dev \\\n    libffi-dev \\\n    make \\\n    openssl-dev \u0026\u0026 \\\n  pip install azure-cli \u0026\u0026 \\\n  apk del nebula-azure-build-deps\n"]
 COPY "./step.sh" "/nebula/step-azureresourcemanager-deployer.sh"
+ENTRYPOINT []
 CMD ["/bin/bash", "/nebula/step-azureresourcemanager-deployer.sh"]
 
 LABEL "org.opencontainers.image.title"="Azure Resource Manager deployer"

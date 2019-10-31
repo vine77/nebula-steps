@@ -38,9 +38,9 @@ done
 shift $(( OPTIND - 1 ))
 
 
-$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/66a8d0976005/lambda-function-creator --file Dockerfile .
+$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/e913dd800fdb/lambda-function-creator --file Dockerfile .
 
 for TAG in ${TAGS[@]+"${TAGS[@]}"}; do
-  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/66a8d0976005/lambda-function-creator "projectnebula/lambda-function-creator:${TAG}" && \
+  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/e913dd800fdb/lambda-function-creator "projectnebula/lambda-function-creator:${TAG}" && \
     printf "# Tagged %s:%s\n" projectnebula/lambda-function-creator "${TAG}"
 done

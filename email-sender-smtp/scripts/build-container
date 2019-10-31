@@ -38,9 +38,9 @@ done
 shift $(( OPTIND - 1 ))
 
 
-$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/079acc5ca876/email-sender-smtp --file Dockerfile .
+$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/75a0cc0fa8f1/email-sender-smtp --file Dockerfile .
 
 for TAG in ${TAGS[@]+"${TAGS[@]}"}; do
-  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/079acc5ca876/email-sender-smtp "projectnebula/email-sender-smtp:${TAG}" && \
+  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/75a0cc0fa8f1/email-sender-smtp "projectnebula/email-sender-smtp:${TAG}" && \
     printf "# Tagged %s:%s\n" projectnebula/email-sender-smtp "${TAG}"
 done

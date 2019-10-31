@@ -38,9 +38,9 @@ done
 shift $(( OPTIND - 1 ))
 
 
-$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/5162113df566/jenkins-job-runner --file Dockerfile .
+$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/e241c0c33fe7/jenkins-job-runner --file Dockerfile .
 
 for TAG in ${TAGS[@]+"${TAGS[@]}"}; do
-  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/5162113df566/jenkins-job-runner "projectnebula/jenkins-job-runner:${TAG}" && \
+  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/e241c0c33fe7/jenkins-job-runner "projectnebula/jenkins-job-runner:${TAG}" && \
     printf "# Tagged %s:%s\n" projectnebula/jenkins-job-runner "${TAG}"
 done

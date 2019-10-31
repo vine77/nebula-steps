@@ -9,6 +9,7 @@ RUN go build -a -o "/usr/local/bin/nebula-slack-notification" "./cmd/nebula-slac
 FROM alpine:3
 RUN apk --no-cache add ca-certificates && update-ca-certificates
 COPY --from=builder "/usr/local/bin/nebula-slack-notification" "/usr/local/bin/nebula-slack-notification"
+ENTRYPOINT []
 CMD ["/usr/local/bin/nebula-slack-notification"]
 
 LABEL "org.opencontainers.image.title"="Slack notification"

@@ -15,6 +15,7 @@ RUN apk --no-cache add bash ca-certificates curl git jq openssh && update-ca-cer
 RUN apk --no-cache add zip
 RUN ["/bin/bash", "-c", "pip install awscli"]
 COPY "./step.sh" "/nebula/step-lambda-function-creator.sh"
+ENTRYPOINT []
 CMD ["/bin/bash", "/nebula/step-lambda-function-creator.sh"]
 
 LABEL "org.opencontainers.image.title"="AWS S3 uploader"

@@ -13,6 +13,7 @@ RUN set -eux ; \
     rm -fr /tmp/ni
 RUN apk --no-cache add bash ca-certificates curl git jq openssh && update-ca-certificates
 COPY "./step.sh" "/nebula/step-vault.sh"
+ENTRYPOINT []
 CMD ["/bin/bash", "/nebula/step-vault.sh"]
 
 LABEL "org.opencontainers.image.title"="Hashicorp Vault"

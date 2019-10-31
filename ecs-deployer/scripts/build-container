@@ -38,9 +38,9 @@ done
 shift $(( OPTIND - 1 ))
 
 
-$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/c6ac43a94572/ecs-deployer --file Dockerfile .
+$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/fdf0014478e1/ecs-deployer --file Dockerfile .
 
 for TAG in ${TAGS[@]+"${TAGS[@]}"}; do
-  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/c6ac43a94572/ecs-deployer "projectnebula/ecs-deployer:${TAG}" && \
+  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/fdf0014478e1/ecs-deployer "projectnebula/ecs-deployer:${TAG}" && \
     printf "# Tagged %s:%s\n" projectnebula/ecs-deployer "${TAG}"
 done

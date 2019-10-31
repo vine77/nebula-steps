@@ -10,6 +10,7 @@ FROM alpine:3
 RUN apk --no-cache add ca-certificates && update-ca-certificates
 RUN ["/bin/sh", "-c", "set -eux\nmkdir -p /tmp/kops \u0026\u0026 \\\n  cd /tmp/kops \u0026\u0026 \\\n  wget -q https://github.com/kubernetes/kops/releases/download/1.14.0/kops-linux-amd64 \u0026\u0026 \\\n  echo \"$( wget -q -O - https://github.com/kubernetes/kops/releases/download/1.14.0/kops-linux-amd64-sha1 )  kops-linux-amd64\" | sha1sum -c - \u0026\u0026 \\\n  chmod +x kops-linux-amd64 \u0026\u0026 \\\n  mv kops-linux-amd64 /usr/local/bin/kops \u0026\u0026 \\\n  cd - \u0026\u0026 \\\n  rm -fr /tmp/kops\n"]
 COPY --from=builder "/usr/local/bin/nebula-k8s-provisioner" "/usr/local/bin/nebula-k8s-provisioner"
+ENTRYPOINT []
 CMD ["/usr/local/bin/nebula-k8s-provisioner"]
 
 LABEL "org.opencontainers.image.title"=""

@@ -118,6 +118,8 @@ github.com/puppetlabs/nebula-sdk v1.0.2-0.20191030223114-06ac33abe90f h1:6ZvXKyF
 github.com/puppetlabs/nebula-sdk v1.0.2-0.20191030223114-06ac33abe90f/go.mod h1:47ja6S1RFM18pscbQ1p+F4eKLwerykkg+gVrOiNzbW0=
 github.com/puppetlabs/nebula-sdk v1.1.0 h1:WV72GBjjHt9Z67gQocZloU7V0GjjqaE7m4FEb4+CtRA=
 github.com/puppetlabs/nebula-sdk v1.1.0/go.mod h1:47ja6S1RFM18pscbQ1p+F4eKLwerykkg+gVrOiNzbW0=
+github.com/puppetlabs/nebula-sdk v1.1.1 h1:FOXTOUN1GYvaKolCZa+S3627MOCWZMRX22AjCWFtnpQ=
+github.com/puppetlabs/nebula-sdk v1.1.1/go.mod h1:47ja6S1RFM18pscbQ1p+F4eKLwerykkg+gVrOiNzbW0=
 github.com/reflect/raymond v0.0.0-20190227215356-5fa3955f4a50/go.mod h1:Bmc/S4QVVTw9ZH5y5JLDKbgeykqJLnSiUqtQ9SaHjmQ=
 github.com/reflect/xparse v0.0.0-20171128034418-ab29bdc5e11c/go.mod h1:tqAg+37u8qXKZZ1QaXWnJ18evc8C6euGUAa4dQpC1gk=
 github.com/russross/blackfriday v1.5.2/go.mod h1:JO/DiYxRf+HjHt06OyowR9PTA263kcR/rfWxYHBV53g=

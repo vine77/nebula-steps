@@ -38,9 +38,9 @@ done
 shift $(( OPTIND - 1 ))
 
 
-$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/2c5ef52d66cc/jira-resolve --file Dockerfile .
+$DOCKER $DOCKER_ARGS build $DOCKER_BUILD_ARGS --tag sdk.nebula.localhost/intermediate/291fe6d6d058/jira-resolve --file Dockerfile .
 
 for TAG in ${TAGS[@]+"${TAGS[@]}"}; do
-  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/2c5ef52d66cc/jira-resolve "projectnebula/jira-resolve:${TAG}" && \
+  $DOCKER $DOCKER_ARGS tag sdk.nebula.localhost/intermediate/291fe6d6d058/jira-resolve "projectnebula/jira-resolve:${TAG}" && \
     printf "# Tagged %s:%s\n" projectnebula/jira-resolve "${TAG}"
 done

@@ -14,6 +14,7 @@ RUN set -eux ; \
 RUN apk --no-cache add bash ca-certificates curl git jq openssh && update-ca-certificates
 RUN apk --no-cache add xmlstarlet
 COPY "./step.sh" "/nebula/step-jenkins-job-runner.sh"
+ENTRYPOINT []
 CMD ["/bin/bash", "/nebula/step-jenkins-job-runner.sh"]
 
 LABEL "org.opencontainers.image.title"="Jenkins job runner"

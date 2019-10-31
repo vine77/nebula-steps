@@ -14,6 +14,7 @@ RUN set -eux ; \
 RUN apk --no-cache add bash ca-certificates curl git jq openssh && update-ca-certificates
 RUN ["/bin/bash", "-c", "set -eux\nmkdir -p /tmp/helm \u0026\u0026 \\\n  cd /tmp/helm \u0026\u0026 \\\n  curl -L -o helm.tar.gz https://get.helm.sh/helm-v2.15.1-linux-amd64.tar.gz \u0026\u0026 \\\n  echo \"$( curl -sL https://get.helm.sh/helm-v2.15.1-linux-amd64.tar.gz.sha256 )  helm.tar.gz\" | sha256sum -c - \u0026\u0026 \\\n  tar -xvzf helm.tar.gz \u0026\u0026 \\\n  mv linux-amd64/helm /usr/local/bin/helm \u0026\u0026 \\\n  cd - \u0026\u0026 \\\n  rm -fr /tmp/helm\n"]
 COPY "./step.sh" "/nebula/step-helm.sh"
+ENTRYPOINT []
 CMD ["/bin/bash", "/nebula/step-helm.sh"]
 
 LABEL "org.opencontainers.image.title"="Helm"

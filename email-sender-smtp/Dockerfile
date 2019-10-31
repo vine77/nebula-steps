@@ -9,6 +9,7 @@ RUN go build -a -o "/usr/local/bin/nebula-email-sender-smtp" "./cmd/nebula-email
 FROM alpine:3
 RUN apk --no-cache add ca-certificates && update-ca-certificates
 COPY --from=builder "/usr/local/bin/nebula-email-sender-smtp" "/usr/local/bin/nebula-email-sender-smtp"
+ENTRYPOINT []
 CMD ["/usr/local/bin/nebula-email-sender-smtp"]
 
 LABEL "org.opencontainers.image.title"="SMTP email sender"

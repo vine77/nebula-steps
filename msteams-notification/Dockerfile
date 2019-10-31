@@ -13,6 +13,7 @@ RUN set -eux ; \
     rm -fr /tmp/ni
 RUN apk --no-cache add bash ca-certificates curl git jq openssh && update-ca-certificates
 COPY "./step.sh" "/nebula/step-msteams-notification.sh"
+ENTRYPOINT []
 CMD ["/bin/bash", "/nebula/step-msteams-notification.sh"]
 
 LABEL "org.opencontainers.image.title"="Microsoft Teams notification"
