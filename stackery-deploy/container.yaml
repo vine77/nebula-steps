@@ -1,0 +1,20 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: {from: sdk, name: bash.v1}
+title: Deploy with Stackery
+description: >
+  This task deploys a Stackery stack to an environment.
+settings:
+  Image: python:3-alpine
+  AdditionalPackages: [build-base, libc6-compat, python3-dev]
+  AdditionalCommands:
+  - pip install awscli aws-sam-cli cfn_flip
+  - |
+    set -eux
+    mkdir -p /tmp/stackery && \
+      cd /tmp/stackery && \
+      curl -L -o stackery --compressed https://ga.cli.stackery.io/linux/stackery && \
+      chmod +x stackery && \
+      mv stackery /usr/local/bin/stackery && \
+      cd - && \
+      rm -fr /tmp/stackery
