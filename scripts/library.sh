@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 DIRNAME="${DIRNAME:-dirname}"
+DOCKER="${DOCKER:-docker}"
 GO="${GO:-go}"
 READLINK_F="${READLINK_F:-readlink -f}"
 XARGS_R="${XARGS:-xargs -r}"
@@ -22,6 +23,13 @@ nebula::steps::step_files() {
 
 nebula::steps::step_dirs() {
   nebula::steps::step_files | $XARGS_R $DIRNAME
+}
+
+nebula::steps::step_images() {
+  $DOCKER image ls \
+    --filter=label=com.puppet.nebula.sdk.version \
+    --filter=reference='projectnebula/*' \
+    --format='{{ .Repository }}:{{ .Tag }}'
 }
 
 nebula::steps::usage() {

@@ -27,7 +27,10 @@ jobs:
     - scripts/ci scripts/build-all
     before_cache:
     - set -e
-    - docker save -o .cache/nebula-docker-images/images.tar $( docker images -q -f 'reference=projectnebula/*' )
+    - |
+      docker save \
+        -o .cache/nebula-docker-images/images.tar \
+        $( . scripts/library.sh && nebula::steps::step_images )
   - stage: release
     install:
     - set -e
