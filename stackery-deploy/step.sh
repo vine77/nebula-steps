@@ -36,6 +36,14 @@ usage() {
   exit 1
 }
 
+declare -a PACKAGES="( $( $NI get | $JQ -r 'try .os.packages // empty | @sh' ) )"
+[[ ${#PACKAGES[@]} -gt 0 ]] && ( set -x ; apk --no-cache add "${PACKAGES[@]}" )
+
+declare -a COMMANDS="( $( $NI get | $JQ -r 'try .os.commands // empty | @sh' ) )"
+for COMMAND in ${COMMANDS[@]+"${COMMANDS[@]}"}; do
+  ( set -x ; bash -c "${COMMAND}" )
+done
+
 STACKERY_KEY="$( $NI get -p '{ .stackery.key }' )"
 [ -z "${STACKERY_KEY}" ] && usage 'spec: please specify a value for `stackery.key`, the API key to access Stackery'
 

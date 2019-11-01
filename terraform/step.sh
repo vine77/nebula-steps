@@ -1,10 +1,27 @@
 #!/bin/bash
 
+#
+# Commands
+#
+
+JQ="${JQ:-jq}"
+NI="${NI:-ni}"
+
+#
+#
+#
+
+declare -a PACKAGES="( $( $NI get | $JQ -r 'try .os.packages // empty | @sh' ) )"
+[[ ${#PACKAGES[@]} -gt 0 ]] && ( set -x ; apk --no-cache add "${PACKAGES[@]}" )
+
+declare -a COMMANDS="( $( $NI get | $JQ -r 'try .os.commands // empty | @sh' ) )"
+for COMMAND in ${COMMANDS[@]+"${COMMANDS[@]}"}; do
+  ( set -x ; bash -c "${COMMAND}" )
+done
+
 DIRECTORY=$(ni get -p {.directory})
 WORKSPACE=$(ni get -p {.workspace})
 WORKSPACE_FILE=workspace.${WORKSPACE}.tfvars.json
-JQ=jq
-NI=ni
 
 CREDENTIALS=$(ni get -p {.credentials})
 if [ -n "${CREDENTIALS}" ]; then
