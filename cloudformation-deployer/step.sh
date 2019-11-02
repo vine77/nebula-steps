@@ -77,3 +77,11 @@ $AWS cloudformation deploy \
   --template-file "${TEMPLATE_FILE}" \
   --no-fail-on-empty-changeset \
   "${DEPLOY_ARGS[@]}"
+
+OUTPUTS=$( $AWS cloudformation describe-stacks --stack-name "${STACK_NAME}" | $JQ -r '.Stacks[0].Outputs // []' )
+OUTPUTS_HASH=$( $JQ -r 'map({key: .OutputKey, value: .OutputValue}) | from_entries' <<<"${OUTPUTS}" )
+KEYS=$( $JQ -r 'keys[]' <<<"${OUTPUTS_HASH}" )
+for key in ${KEYS}; do
+  value=$( $JQ -r --arg KEY "$key" '.[$KEY]' <<<"${OUTPUTS_HASH}" )
+  ni output set --key "${key}" --value "${value}"
+done
