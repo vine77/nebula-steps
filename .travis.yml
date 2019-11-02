@@ -22,5 +22,7 @@ jobs:
     - scripts/ci scripts/generate
     - scripts/ci scripts/build-all
     - |
-      [ -n "${DOCKER_PASSWORD}" ] && docker login -u "${DOCKER_USERNAME}" --password-stdin <<<"${DOCKER_PASSWORD}"
+      if [ -n "${DOCKER_PASSWORD}" ]; then
+        docker login -u "${DOCKER_USERNAME}" --password-stdin <<<"${DOCKER_PASSWORD}"
+      fi
     - scripts/ci scripts/release-all
