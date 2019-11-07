@@ -5,6 +5,7 @@
 {{- $PackageRepoURL := printf "https://packages.nebula.puppet.net/sdk/ni/%s" .SDKVersion -}}
 
 FROM puppet/puppet-bolt:latest
+ENV LANG C.UTF-8
 RUN apt-get update && \
     apt-get install --no-install-recommends -y curl git jq openssh-client wget xz-utils && \
     apt-get clean && \
