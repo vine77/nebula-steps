@@ -1,4 +1,4 @@
-# stacker-deploy
+# stackery-deploy
 
 This step container builds and deploys a Stackery stack to a Stackery
 environment.
