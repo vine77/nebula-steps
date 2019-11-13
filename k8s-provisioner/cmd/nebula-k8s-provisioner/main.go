@@ -3,11 +3,12 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
+	"fmt"
 	"os"
 	"time"
 
 	"github.com/puppetlabs/horsehead/v2/workdir"
+	"github.com/puppetlabs/nebula-sdk/pkg/log"
 	outputsclient "github.com/puppetlabs/nebula-sdk/pkg/outputs"
 	"github.com/puppetlabs/nebula-sdk/pkg/taskutil"
 	"github.com/puppetlabs/nebula-steps/k8s-provisioner/pkg/provisioning"
@@ -20,13 +21,13 @@ func main() {
 
 	flag.Parse()
 
-	log.Println("provisioning k8s cluster")
+	log.Info("provisioning k8s cluster")
 
 	planOpts := taskutil.DefaultPlanOptions{SpecURL: *specURL}
 
 	var spec models.K8sProvisionerSpec
 	if err := taskutil.PopulateSpecFromDefaultPlan(&spec, planOpts); err != nil {
-		log.Fatal(err)
+		log.FatalE(err)
 	}
 
 	var wd *workdir.WorkDir
@@ -37,13 +38,13 @@ func main() {
 			// we will NOT be calling wd.Cleanup() when using a directory passed in by a flag. This is a disaster waiting to happen.
 			wd, err = workdir.New(*workDir, workdir.Options{})
 			if err != nil {
-				log.Fatal(err)
+				log.FatalE(err)
 			}
 		} else {
 			ns := workdir.NewNamespace([]string{"nebula", "task-k8s-provisioner"})
 			wd, err = ns.New(workdir.DirTypeCache, workdir.Options{})
 			if err != nil {
-				log.Fatal(err)
+				log.FatalE(err)
 			}
 			// we can reliably defer the cleanup of this directory. we have used our own namespace.
 			defer wd.Cleanup()
@@ -53,7 +54,7 @@ func main() {
 
 	outputs, err := outputsclient.NewDefaultOutputsClientFromNebulaEnv()
 	if err != nil {
-		log.Fatal(err)
+		log.FatalE(err)
 	}
 
 	managerCfg := provisioning.K8sClusterManagerConfig{
@@ -64,7 +65,7 @@ func main() {
 
 	manager, err := provisioning.NewK8sClusterManagerFromSpec(managerCfg)
 	if err != nil {
-		log.Fatal(err)
+		log.FatalE(err)
 	}
 
 	// TODO: we need to figure out how to better provision a cluster and report readiness.
@@ -74,8 +75,8 @@ func main() {
 
 	cluster, err := manager.Synchronize(ctx)
 	if err != nil {
-		log.Fatal(err)
+		log.FatalE(err)
 	}
 
-	log.Println(cluster)
+	log.Info(fmt.Sprintf("%v", cluster))
 }

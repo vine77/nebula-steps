@@ -1,5 +1,4 @@
 #!/bin/sh
-
 NS=$(ni get -p {.namespace})
 CLUSTER=$(ni get -p {.cluster.name})
 KUBECONFIG=/workspace/${CLUSTER}/kubeconfig

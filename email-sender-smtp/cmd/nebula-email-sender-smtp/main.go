@@ -3,10 +3,11 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
+	"fmt"
 	"os"
 	"time"
 
+	"github.com/puppetlabs/nebula-sdk/pkg/log"
 	"github.com/puppetlabs/nebula-sdk/pkg/taskutil"
 	"github.com/puppetlabs/nebula-steps/email-sender-smtp/pkg/sender"
 	gomail "gopkg.in/gomail.v2"
@@ -21,7 +22,7 @@ func main() {
 
 	var spec sender.Spec
 	if err := taskutil.PopulateSpecFromDefaultPlan(&spec, planOpts); err != nil {
-		log.Fatalln(err)
+		log.FatalE(err)
 	}
 
 	ctx := context.Background()
@@ -74,10 +75,10 @@ func main() {
 	var dialer sender.Dialer
 	sender, err := dialer.DialContext(ctx, spec.Server)
 	if err != nil {
-		log.Fatalln("could not connect to SMTP server:", err)
+		log.Fatal(fmt.Sprintf("could not connect to SMTP server: %v", err))
 	}
 
 	if err := gomail.Send(sender, m); err != nil {
-		log.Fatalln("could not send message:", err)
+		log.Fatal(fmt.Sprintf("could not send message: %v", err))
 	}
 }

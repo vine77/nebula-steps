@@ -20,21 +20,6 @@ XMLSTARLET="${XMLSTARLET:-xmlstarlet}"
 
 WORKDIR="${WORKDIR:-/workspace}"
 
-#
-#
-#
-
-trap 'jobs -p | xargs -I{} kill -- {}' SIGINT SIGTERM EXIT
-
-log() {
-  echo "[$( date -Iseconds )] $@"
-}
-
-err() {
-  log "error: $@" >&2
-  exit 2
-}
-
 usage() {
   echo "usage: $@" >&2
   exit 1
@@ -52,10 +37,10 @@ get_header() {
 # Check whether this seems like Jenkins
 JENKINS_VERSION="$( $CURL -sI "${MASTER_URL}/login" | get_header X-Jenkins )"
 [ -z "${JENKINS_VERSION}" ] && {
-  err 'spec: value for `masterURL` does not seem like a Jenkins server (missing X-Jenkins header)'
+  ni log fatal 'spec: value for `masterURL` does not seem like a Jenkins server (missing X-Jenkins header)'
 }
 
-log "detected Jenkins version ${JENKINS_VERSION}"
+ni log info "detected Jenkins version ${JENKINS_VERSION}"
 
 CREDENTIALS_METHOD="$( $NI get -p '{ .credentials.method }' )"
 case "${CREDENTIALS_METHOD}" in
@@ -63,10 +48,10 @@ http)
   CREDENTIALS_HTTP="$( $NI get -p '{ .credentials.user }:{ .credentials.token }' )"
   ;;
 ssh)
-  err 'spec: SSH credentials method is not currently implemented'
+  ni log fatal 'spec: SSH credentials method is not currently implemented'
   ;;
 *)
-  err 'spec: unknown credentials method `'"${CREDENTIALS_METHOD}"'`; please specify one of `http` or `ssh`'
+  ni log fatal 'spec: unknown credentials method `'"${CREDENTIALS_METHOD}"'`; please specify one of `http` or `ssh`'
   ;;
 esac
 
@@ -77,7 +62,7 @@ case "${QUEUE_OPT_WAIT_FOR}" in
 none|build|downstreams)
   ;;
 *)
-  err 'spec: invalid value for `queueOptions.waitFor`; please specify one of "none", "build", or "downstreams"'
+  ni log fatal 'spec: invalid value for `queueOptions.waitFor`; please specify one of "none", "build", or "downstreams"'
   ;;
 esac
 
@@ -128,27 +113,27 @@ do_api_master() {
 }
 
 JENKINS_USER="$( do_api_master GET /me/api/json | $JQ -r '.id' )" || {
-  err 'spec: `credentials.user` and `credentials.token` do not appear to successfully authenticate'
+  ni log fatal 'spec: `credentials.user` and `credentials.token` do not appear to successfully authenticate'
 }
 
-log "authenticated to Jenkins as ${JENKINS_USER}"
+ni log info "authenticated to Jenkins as ${JENKINS_USER}"
 
 JOB="$( $NI get -p '{ .job }' )"
 [ -z "${JOB}" ] && usage 'spec: please specify a value for `job`, the identifier for the Jenkins job to build'
 
 JOB_DISPLAY_NAME_QUOTED=$( do_api_master GET /job/${JOB}/api/json | $JQ '.fullDisplayName' ) || {
-  err 'spec: `job` does not appear to be a valid identifier for a Jenkins job'
+  ni log fatal 'spec: `job` does not appear to be a valid identifier for a Jenkins job'
 }
 
-log "building job ${JOB_DISPLAY_NAME_QUOTED}"
+ni log info "building job ${JOB_DISPLAY_NAME_QUOTED}"
 
 JOB_PARAMS="$( $NI get | $JQ -r '[ try .parameters | to_entries[] | @uri "\( .key )=\( .value )" ] | join("&")' )"
 
 QUEUE_URL="$( do_api_master POST "/job/${JOB}/buildWithParameters?${JOB_PARAMS}" '' --dump-header - -o /dev/null | get_header Location )" || {
-  err 'could not enqueue build'
+  ni log fatal 'could not enqueue build'
 }
 
-log "enqueued build at ${QUEUE_URL}"
+ni log info "enqueued build at ${QUEUE_URL}"
 
 [[ "${QUEUE_OPT_WAIT_FOR}" == "none" ]] && exit 0
 
@@ -174,7 +159,7 @@ wait_for_build() {
   local BUILD_URL="$1"
 
   if [[ -v SEEN[${BUILD_URL%%/}] ]]; then
-    log "already visited ${BUILD_URL}, continuing"
+    ni log info "already visited ${BUILD_URL}, continuing"
     return
   fi
   SEEN[${BUILD_URL%%/}]=1
@@ -183,12 +168,12 @@ wait_for_build() {
   # on downstreams-of-downstreams...
   local JOB_URL="$( $SED -e 's#\(.*/job/[^/]*\)/.*#\1#' <<<"${BUILD_URL}" )"
   local JOB_DATA=$( do_api GET "${JOB_URL}/api/json" '' -L ) || {
-    err 'unable to find job for build'
+    ni log fatal 'unable to find job for build'
   }
 
   local JOB_NAME="$( jq -r '.name' <<<"${JOB_DATA}" )"
 
-  log "build of ${JOB_NAME} started at ${BUILD_URL}; the log stream follows"
+  ni log info "build of ${JOB_NAME} started at ${BUILD_URL}; the log stream follows"
 
   local BUILD_OFFSET=0
 
@@ -217,14 +202,14 @@ wait_for_build() {
 
   # Get the final build status from the API
   local BUILD_DATA="$( do_api GET "${BUILD_URL%%/}/api/json" '' -L )" || {
-    err 'failed to retrieve build data'
+    ni log fatal 'failed to retrieve build data'
   }
 
   local BUILD_ID=$( $JQ -r '.id' <<<"${BUILD_DATA}" )
   local BUILD_RESULT="$( $JQ -r '.result // empty' <<<"${BUILD_DATA}" )"
 
-  log "build complete and returned ${BUILD_RESULT}"
-  [[ "${BUILD_RESULT}" == "SUCCESS" ]] || err 'build failed'
+  ni log info "build complete and returned ${BUILD_RESULT}"
+  [[ "${BUILD_RESULT}" == "SUCCESS" ]] || ni log fatal 'build failed'
 
   # If we will wait for downstream builds, they should now be in the queue
   if [[ "${QUEUE_OPT_WAIT_FOR}" == "downstreams" ]]; then
@@ -275,9 +260,9 @@ try_cancel_queued() {
     [ -z "$( $JQ -r '.executable.url // empty' <<<"${QUEUE_DATA}" )" ] || continue
 
     do_api_master POST "/queue/cancelItem?id=${QUEUE_ID}" '' -o /dev/null && {
-      log "timed out: canceled build in queue at item ${QUEUE_ID}"
+      ni log info "timed out: canceled build in queue at item ${QUEUE_ID}"
     } || {
-      log "timed out: attempted to cancel build in queue at item ${QUEUE_ID}, but failed"
+      ni log info "timed out: attempted to cancel build in queue at item ${QUEUE_ID}, but failed"
     }
   done
 }
@@ -285,7 +270,7 @@ try_cancel_queued() {
 wait_for_queue() {
   local QUEUE_URL="$1"
 
-  log "waiting up to ${QUEUE_OPT_TIMEOUT_SECS} seconds for next build to start"
+  ni log info "waiting up to ${QUEUE_OPT_TIMEOUT_SECS} seconds for next build to start"
 
   local QUEUE_WAITED=0 # seconds
   local QUEUE_ID
@@ -295,11 +280,11 @@ wait_for_queue() {
     local API_START=$SECONDS
 
     local QUEUE_DATA="$( do_api GET "${QUEUE_URL%%/}/api/json" '' -L )" || {
-      err 'failed to retrieve queue data'
+      ni log fatal 'failed to retrieve queue data'
     }
 
     QUEUE_ID="$( $JQ -r '.id // empty' <<<"${QUEUE_DATA}" )"
-    [ -z "${QUEUE_ID}" ] && err 'could not find item ID from queue data'
+    [ -z "${QUEUE_ID}" ] && ni log fatal 'could not find item ID from queue data'
 
     BUILD_URL="$( $JQ -r '.executable.url // empty' <<<"${QUEUE_DATA}" )"
     [ -n "${BUILD_URL}" ] && break
@@ -308,13 +293,13 @@ wait_for_queue() {
 
     # Maybe it's been canceled?
     if [[ "$( $JQ -r '.cancelled // false' <<<"${QUEUE_DATA}" )" == "true" ]]; then
-      err 'build canceled'
+      ni log fatal 'build canceled'
     fi
 
     QUEUE_WAITED=$(( $QUEUE_WAITED + $API_WAITED + $QUEUE_WAIT_INTERVAL ))
     if [[ $QUEUE_WAITED -gt "${QUEUE_OPT_TIMEOUT_SECS}" ]]; then
       try_cancel_queued
-      err 'timed out waiting for build to start'
+      ni log fatal 'timed out waiting for build to start'
     fi
 
     $SLEEP $QUEUE_WAIT_INTERVAL
