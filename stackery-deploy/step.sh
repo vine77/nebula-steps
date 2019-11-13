@@ -145,11 +145,11 @@ SAM_CLI_TELEMETRY=0 $STACKERY deploy \
   --env-name="${ENV_NAME}"
 
 
-STACKERY_OUTPUT=`stackery describe -e $ENV_NAME -n $STACK_NAME --json`
-STACKERY_API_ID=$(echo $STACKERY_OUTPUT | jq .resources.Api.restApi.id)
+STACKERY_OUTPUT="$( $STACKERY describe -e $ENV_NAME -n $STACK_NAME --json )"
+STACKERY_API_ID="$( $JQ '.resources.Api.restApi.id // empty' <<< "${STACKERY_OUTPUT}" )"
 
 # If an API Gateway exists in the stack then build the URL as its provided by AWS
 if [ -n "$STACKERY_API_ID" ]; then
-  API_URL_STRING=$(echo $STACKERY_OUTPUT | $JQ -r '"https://\( .resources.Api.restApi.id ).execute-api.\( .region ).amazonaws.com/\( .resources.Api.stageDomainName )"')
-  ni output set --key "apiURL" --value $API_URL_STRING
+  API_URL_STRING="$( $JQ -r '"https://\( .resources.Api.restApi.id ).execute-api.\( .region ).amazonaws.com/\( .resources.Api.stageDomainName )" // empty' <<< "${STACKERY_OUTPUT}" )"
+  ni output set --key "apiURL" --value "$API_URL_STRING"
 fi
