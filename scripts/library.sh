@@ -1,10 +1,21 @@
 #!/usr/bin/env bash
 
-DIRNAME="${DIRNAME:-dirname}"
+OS="${OSTYPE//[0-9.-]*/}"
+
 DOCKER="${DOCKER:-docker}"
 GO="${GO:-go}"
-READLINK_F="${READLINK_F:-readlink -f}"
-XARGS_R="${XARGS:-xargs -r}"
+
+if [ "$OS" == "darwin" ]; then
+  DIRNAME="${DIRNAME:-gdirname}"
+  READLINK_F="${READLINK_F:-greadlink -f}"
+  XARGS_R="${XARGS:-gxargs -r}"
+else
+  DIRNAME="${DIRNAME:-dirname}"
+  READLINK_F="${READLINK_F:-readlink -f}"
+  XARGS_R="${XARGS:-xargs -r}"
+fi
+
+
 
 #
 #
