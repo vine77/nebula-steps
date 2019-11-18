@@ -119,6 +119,11 @@ esac
 TARGETS="$( $NI get | $JQ -r 'try .targets | if type == "string" then . else join(",") end' )"
 [ -n "${TARGETS}" ] && BOLT_ARGS+=( "--targets=${TARGETS}" )
 
+INSTALL_MODULES="$( $NI get -p '{ .installModules }' )"
+if [[ "${INSTALL_MODULES}" == "true" ]]; then
+    $BOLT puppetfile install
+fi
+
 # Run Bolt!
 $BOLT \
   "${BOLT_TYPE}" run "${BOLT_NAME}" \
