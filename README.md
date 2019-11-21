@@ -7,6 +7,14 @@ To use one of these step images in your Nebula workflow, see our
 [Docker Hub](https://hub.docker.com/u/projectnebula) for the complete list of
 available tags.
 
+### Setup for Max OSX users
+
+Build steps require GNU versions of several core utilities. Before running any scripts here, install these with
+
+```
+brew install coreutils findutils
+```
+
 ## Modifying a step image
 
 Most of the images in this repository are simple Bash scripts. To modify the

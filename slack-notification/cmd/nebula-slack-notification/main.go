@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/puppetlabs/nebula-sdk/pkg/log"
 	"github.com/puppetlabs/nebula-steps/slack-notification/pkg/client"
 )
 
@@ -46,12 +47,10 @@ func getSpec() (*Spec, error) {
 func main() {
 	spec, err := getSpec()
 	if nil != err {
-		fmt.Printf("%v\n", err)
-		os.Exit(1)
+		log.FatalE(err)
 	}
 	if "" == spec.Channel || "" == spec.Message || "" == spec.Apitoken {
-		fmt.Printf("Missing required fields. Expect spec to contain 'apitoken', 'channel' and 'message'")
-		os.Exit(1)
+		log.Fatal("Missing required fields. Expect spec to contain 'apitoken', 'channel' and 'message'")
 	}
 	if "" == spec.Username {
 		spec.Username = "Nebula"
@@ -66,8 +65,7 @@ func main() {
 		})
 
 	if nil != err {
-		fmt.Printf("%v\n", err)
-		os.Exit(1)
+		log.FatalE(err)
 	}
 
 	os.Exit(0)

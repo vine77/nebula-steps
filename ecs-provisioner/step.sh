@@ -1,5 +1,4 @@
 #!/bin/sh
-
 CREDENTIALS=$(ni get -p {.credentials})
 if [ -n "${CREDENTIALS}" ]; then
     ni credentials config

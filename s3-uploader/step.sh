@@ -18,16 +18,6 @@ WORKDIR="${WORKDIR:-/workspace}"
 #
 #
 #
-
-log() {
-  echo "[$( date -Iseconds )] $@"
-}
-
-err() {
-  log "error: $@" >&2
-  exit 2
-}
-
 usage() {
   echo "usage: $@" >&2
   exit 1
@@ -45,12 +35,12 @@ declare -a CP_ARGS
 
 SOURCE_PATH="$( $NI get -p '{ .sourcePath }' )"
 if [ -n "${SOURCE_PATH}" ]; then
-  ni git clone -d "${WORKDIR}/repo" || err 'could not clone git repository'
+  ni git clone -d "${WORKDIR}/repo" || ni log fatal 'could not clone git repository'
   [[ ! -d "${WORKDIR}/repo" ]] && usage 'spec: please specify `git`, the Git repository to use to resolve the source path'
 
   SOURCE_PATH="$( realpath "${WORKDIR}/repo/$( $NI get -p '{ .git.name }' )/${SOURCE_PATH}" )"
   if [[ "$?" != 0 ]] || [[ "${SOURCE_PATH}" != "${WORKDIR}/repo/"* ]]; then
-    err 'spec: `sourcePath` does not contain a valid reference to a file in the specified repository'
+    ni log fatal 'spec: `sourcePath` does not contain a valid reference to a file in the specified repository'
   fi
 
   [ -d "${SOURCE_PATH}" ] && CP_ARGS+=( --recursive )
@@ -98,4 +88,4 @@ $AWS s3 cp \
   "${CP_ARGS[@]}" \
   --no-follow-symlinks <<<"${SOURCE_CONTENT:-}"
 
-log "Uploaded all requested content to bucket ${BUCKET}"
+ni log info "Uploaded all requested content to bucket ${BUCKET}"

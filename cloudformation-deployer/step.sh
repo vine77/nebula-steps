@@ -18,16 +18,6 @@ WORKDIR="${WORKDIR:-/workspace}"
 #
 #
 #
-
-log() {
-  echo "[$( date -Iseconds )] $@"
-}
-
-err() {
-  log "error: $@" >&2
-  exit 2
-}
-
 usage() {
   echo "usage: $@" >&2
   exit 1
@@ -41,12 +31,12 @@ eval "$( ni aws env -d "${WORKDIR}/.aws" )"
 
 TEMPLATE_FILE="$( $NI get -p '{ .templateFile }' )"
 if [ -n "${TEMPLATE_FILE}" ]; then
-  ni git clone -d "${WORKDIR}/repo" || err 'could not clone git repository'
+  ni git clone -d "${WORKDIR}/repo" || ni log fatal 'could not clone git repository'
   [[ ! -d "${WORKDIR}/repo" ]] && usage 'spec: please specify `git`, the Git repository to use to resolve the template file'
 
   TEMPLATE_FILE="$( realpath "${WORKDIR}/repo/$( $NI get -p '{ .git.name }' )/${TEMPLATE_FILE}" )"
   if [[ "$?" != 0 ]] || [[ "${TEMPLATE_FILE}" != "${WORKDIR}/repo/"* ]]; then
-    err 'spec: `templateFile` does not contain a valid reference to a file in the specified repository'
+    ni log fatal 'spec: `templateFile` does not contain a valid reference to a file in the specified repository'
   fi
 else
   TEMPLATE_FILE="${WORKDIR}/inline.template"

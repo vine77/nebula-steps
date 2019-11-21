@@ -17,16 +17,6 @@ WORKDIR="${WORKDIR:-/workspace}"
 #
 #
 #
-
-log() {
-  echo "[$( date -Iseconds )] $@"
-}
-
-err() {
-  log "error: $@" >&2
-  exit 2
-}
-
 usage() {
   echo "usage: $@" >&2
   exit 1
@@ -50,7 +40,7 @@ task|plan)
   usage 'spec: specify `type`, one of "task" or "plan", the type of Bolt run to perform'
   ;;
 *)
-  err "unsupported type \"${BOLT_TYPE}\"; cannot run this"
+  ni log fatal "unsupported type \"${BOLT_TYPE}\"; cannot run this"
   ;;
 esac
 
@@ -63,11 +53,11 @@ PARAMS="$( $NI get | jq 'try .parameters // empty' )"
 
 # Boltdir configuration
 if [ -n "$( $NI get -p '{ .git.repository }' )" ]; then
-  $NI git clone -d "${WORKDIR}/repo" || err 'could not clone Git repository'
+  $NI git clone -d "${WORKDIR}/repo" || ni log fatal 'could not clone Git repository'
 
   PROJECT_DIR="$( $NI get -p '{ .projectDir }' )"
   BOLTDIR="${WORKDIR}/repo/$( $NI get -p '{ .git.name }' )${PROJECT_DIR+"/${PROJECT_DIR}"}"
-  [ ! -d "${BOLTDIR}" ] && err "Bolt project directory \"${BOLTDIR}\" does not exist"
+  [ ! -d "${BOLTDIR}" ] && ni log fatal "Bolt project directory \"${BOLTDIR}\" does not exist"
 
   BOLT_ARGS+=( "--boltdir=${BOLTDIR}" )
 elif [ -n "$( $NI get -p '{ .projectDir}' )" ]; then
@@ -111,7 +101,7 @@ winrm)
 '')
   ;;
 *)
-  err "unsupported transport \"${TRANSPORT_TYPE}\" (if this transport is supported by Bolt, try adding it to your bolt.yaml file)"
+  ni log fatal "unsupported transport \"${TRANSPORT_TYPE}\" (if this transport is supported by Bolt, try adding it to your bolt.yaml file)"
   ;;
 esac
 

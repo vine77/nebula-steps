@@ -20,16 +20,6 @@ WORKDIR="${WORKDIR:-/workspace}"
 #
 #
 #
-
-log() {
-  echo "[$( date -Iseconds )] $@"
-}
-
-err() {
-  log "error: $@" >&2
-  exit 2
-}
-
 usage() {
   echo "usage: $@" >&2
   exit 1
@@ -114,12 +104,12 @@ declare -a LAYER_ARNS="( $( $NI get | $JQ -r 'try .layerARNs[] | @sh' ) )"
 SOURCE_PATH="$( $NI get -p '{ .sourcePath }' )"
 SOURCE_CONTENT="$( $NI get -p '{ .source.content }' )"
 if [ -n "${SOURCE_PATH}" ]; then
-  ni git clone -d "${WORKDIR}/repo" || err 'could not clone git repository'
+  ni git clone -d "${WORKDIR}/repo" || ni log fatal 'could not clone git repository'
   [[ ! -d "${WORKDIR}/repo" ]] && usage 'spec: please specify `git`, the Git repository to use to find the deployment package'
 
   SOURCE_PATH="$( realpath "${WORKDIR}/repo/$( $NI get -p '{ .git.name }' )/${SOURCE_PATH}" )"
   if [[ "$?" != 0 ]] || [[ "${SOURCE_PATH}" != "${WORKDIR}/repo/"* ]]; then
-    err 'spec: `sourcePath` does not contain a valid reference to a path in the specified repository'
+    ni log fatal 'spec: `sourcePath` does not contain a valid reference to a path in the specified repository'
   fi
 elif [ -n "${SOURCE_CONTENT}" ]; then
   SOURCE_NAME="$( $NI get -p '{ .source.name }' )"
@@ -131,11 +121,11 @@ elif [ -n "${SOURCE_CONTENT}" ]; then
   $MKDIR_P "${SOURCE_PATH}/$( dirname "${SOURCE_NAME}" )"
   cat >"${SOURCE_PATH}/${SOURCE_NAME}" <<<"${SOURCE_CONTENT}"
 
-  log "Added inline source code to deployment package at ${SOURCE_PATH}/${SOURCE_NAME}"
+  ni log info "Added inline source code to deployment package at ${SOURCE_PATH}/${SOURCE_NAME}"
 fi
 
 if [ -n "${SOURCE_PATH}" ]; then
-  log "Using path ${SOURCE_PATH} for function code"
+  ni log info "Using path ${SOURCE_PATH} for function code"
 
   if [ -d "${SOURCE_PATH}" ]; then
     (
@@ -145,7 +135,7 @@ if [ -n "${SOURCE_PATH}" ]; then
 
     SOURCE_PATH="${WORKDIR}/deployment.zip"
 
-    log "Added all content to deployment file ${SOURCE_PATH}"
+    ni log info "Added all content to deployment file ${SOURCE_PATH}"
   fi
 
   CREATE_ARGS+=( "--zip-file=fileb://${SOURCE_PATH}" )
@@ -158,7 +148,7 @@ else
   [ -z "${SOURCE_S3_BUCKET}" ] && usage 'spec: specify a value for `sourceS3.bucket`, the S3 bucket that contains the deployment'
   [ -z "${SOURCE_S3_KEY}" ] && usage 'spec: specify a value for `sourceS3.key`, the key of the object that contains the deployment'
 
-  log "Using s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_KEY##/} for function code"
+  ni log info "Using s3://${SOURCE_S3_BUCKET}/${SOURCE_S3_KEY##/} for function code"
 
   CREATE_CODE_ARG="$( $JQ -n \
     --arg bucket "${SOURCE_S3_BUCKET}" \
@@ -187,14 +177,14 @@ if [ -z "${EXECUTION_ROLE_ARN}" ]; then
   EXECUTION_ROLE_NAME="$( $NI get -p '{ .executionRole.name }' )"
   [ -z "${EXECUTION_ROLE_NAME}" ] && EXECUTION_ROLE_NAME="${FUNCTION_NAME}"
 
-  log "Provisioning role ${EXECUTION_ROLE_NAME} for Lambda function ${FUNCTION_NAME}..."
+  ni log info "Provisioning role ${EXECUTION_ROLE_NAME} for Lambda function ${FUNCTION_NAME}..."
 
   EXECUTION_ROLE_DATA="$(
     $AWS iam get-role --role-name "${EXECUTION_ROLE_NAME}" 2>/dev/null || \
       $AWS iam create-role \
         --role-name "${EXECUTION_ROLE_NAME}" \
         --assume-role-policy-document "${ASSUME_ROLE_POLICY_DOCUMENT}"
-  )" || err 'could not create execution role, do you have permissions to do so?'
+  )" || ni log fatal 'could not create execution role, do you have permissions to do so?'
   EXECUTION_ROLE_ARN="$( $JQ -r '.Role.Arn' <<<"${EXECUTION_ROLE_DATA}" )"
 
   $AWS iam attach-role-policy --role-name "${EXECUTION_ROLE_NAME}" --policy-arn "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
@@ -209,25 +199,25 @@ if [ -z "${EXECUTION_ROLE_ARN}" ]; then
       --policy-document="${EXECUTION_ROLE_POLICY}"
   fi
 
-  log "Role provisioned at ${EXECUTION_ROLE_ARN}"
+  ni log info "Role provisioned at ${EXECUTION_ROLE_ARN}"
 else
-  log "Using role at ${EXECUTION_ROLE_ARN} for Lambda function ${FUNCTION_NAME}"
+  ni log info "Using role at ${EXECUTION_ROLE_ARN} for Lambda function ${FUNCTION_NAME}"
 fi
 
 CREATE_ARGS+=( "--role=${EXECUTION_ROLE_ARN}" )
 UPDATE_CONFIG_ARGS+=( "--role=${EXECUTION_ROLE_ARN}" )
 
 if $AWS lambda get-function --function-name "${FUNCTION_NAME}" >/dev/null 2>&1; then
-  log "Function ${FUNCTION_NAME} already exists; updating..."
+  ni log info "Function ${FUNCTION_NAME} already exists; updating..."
 
   $AWS lambda update-function-code "${UPDATE_CODE_ARGS[@]}" >/dev/null
   $AWS lambda update-function-configuration "${UPDATE_CONFIG_ARGS[@]}"
 
-  log "Updated"
+  ni log info "Updated"
 else
-  log "Function ${FUNCTION_NAME} does not exist; creating..."
+  ni log info "Function ${FUNCTION_NAME} does not exist; creating..."
 
   $AWS lambda create-function "${CREATE_ARGS[@]}"
 
-  log "Created"
+  ni log info "Created"
 fi

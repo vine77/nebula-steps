@@ -27,11 +27,6 @@ for var in USERNAME PASSWORD URL ISSUE ; do
   fi
 done
 
-err() {
-  echo "error: $@" >&2
-  exit 2
-}
-
 get_header() {
   local REQ_HEADER="$1"
 
@@ -48,7 +43,7 @@ FIRST_CONTACT=$(do_request -D- -X GET "${URL%%/}/rest/api/2/myself")
 # Check jira server.
 AREQUESTID=$(echo "${FIRST_CONTACT}" | get_header "X-AREQUESTID")
 if [ -z "${AREQUESTID}" ] ; then
-  err "spec: url does not appear to be a jira instance: ${URL}"
+  ni log fatal "spec: url does not appear to be a jira instance: ${URL}"
 fi
 
 # Check login credentials
@@ -56,9 +51,9 @@ LOGIN_REASON=$(echo "${FIRST_CONTACT}" | get_header "X-Seraph-LoginReason")
 LOGIN_DENIED_REASON=$(echo "${FIRST_CONTACT}" | get_header 'X-Authentication-Denied-Reason')
 if [ "AUTHENTICATED_FAILED" = "${LOGIN_REASON}" ] ; then
   if [ -n "${LOGIN_DENIED_REASON}" ] ; then
-    err "spec: Authentication for user/password on ${URL} failed: ${LOGIN_DENIED_REASON}"
+    ni log fatal "spec: Authentication for user/password on ${URL} failed: ${LOGIN_DENIED_REASON}"
   else
-    err "spec: Authentication for user/password on ${URL} failed."
+    ni log fatal "spec: Authentication for user/password on ${URL} failed."
   fi
 fi
 
@@ -68,7 +63,7 @@ echo "Authenticated..."
 RESOLUTION_ID="$(do_request -X GET "${URL%%/}/rest/api/2/issue/${ISSUE}/transitions" | jq -r ".transitions[] | select(.name == \"${RESOLUTION_STATUS}\") | .id")"
 
 if [ -z "${RESOLUTION_ID}" ] ; then
-  err "Cannot find transition ID of any issue status named \"${RESOLUTION_STATUS}\""
+  ni log fatal "Cannot find transition ID of any issue status named \"${RESOLUTION_STATUS}\""
 fi
 
 echo "Found issue transition ID for \"${RESOLUTION_STATUS}\": ${RESOLUTION_ID}"
@@ -94,7 +89,7 @@ echo "Submitted issue transition..."
 
 ISSUE_STATUS="$(do_request -X GET "${URL%%/}/rest/api/2/issue/${ISSUE}" | jq -r '.fields.status.name')"
 if [ "${ISSUE_STATUS}" != "${RESOLUTION_STATUS}" ] ; then
-  err "Issue does not appear to have been set to ${RESOLUTION_STATUS}: ${ISSUE_STATUS}"
+  ni log fatal "Issue does not appear to have been set to ${RESOLUTION_STATUS}: ${ISSUE_STATUS}"
 fi
 
 echo "Issue verified as \"${RESOLUTION_STATUS}\""
