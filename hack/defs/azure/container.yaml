@@ -2,7 +2,7 @@ apiVersion: container/v1
 kind: StepContainerTemplate
 inherit: {from: sdk, name: bash.v1}
 settings:
-  Image: python:3-alpine
+  Image: python:2-alpine
   AdditionalCommands:
   - |
     apk --no-cache add --virtual=nebula-azure-build-deps \
