@@ -105,7 +105,6 @@ then
   KEYS=( $( $JQ -r ' {key: .[].key} | .["key"]' <<< $OUTPUTS))
   VALUES=( $( $JQ -r ' {value: .[].value.value} | .["value"]' <<< $OUTPUTS))
 
-  # for i in $($SEQ length); do
   END=$((length - 1))
   for i in $(eval echo "{0..$END}"); do
     echo "Setting output for ${KEYS[i]}"
