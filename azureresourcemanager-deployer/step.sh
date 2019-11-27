@@ -41,6 +41,7 @@ if [ -n "${CERT}" ] ; then
 fi
 [ -z "${PASSWORD_OR_CERT}" ] && usage 'spec: your `azure` hash must specify either a `password` or a `cert` key'
 
+echo "[INFO] Logging in to Azure CLI ..."
 $AZ login --service-principal --tenant "${TENANT_ID}" --username "${USERNAME}" --password "${PASSWORD_OR_CERT}"
 
 DEPLOYMENT_NAME="$( $NI get -p '{ .deploymentName }' )"
@@ -72,6 +73,8 @@ declare -a DEPLOY_ARGS
 mapfile -t PARAMETERS < <( $NI get | $JQ -r 'try .parameters | to_entries[] | "\( .key )=\( .value )"' )
 [[ ${#PARAMETERS[@]} -gt 0 ]] && DEPLOY_ARGS+=( --parameter "${PARAMETERS[@]}" )
 
+
+echo "[INFO] Creating deployment ..."
 if [ -n "${RESOURCE_GROUP}" ] ; then
   ## Deploy to resource group
   $AZ group deployment create \
@@ -87,3 +90,26 @@ else
     --template-file "${TEMPLATE_FILE}" \
     "${DEPLOY_ARGS[@]}"
 fi
+
+## Create Nebula outputs for each template output
+if [ -n "${RESOURCE_GROUP}" ] ; then
+  OUTPUTS=$(az group deployment show -n ${DEPLOYMENT_NAME} -g ${RESOURCE_GROUP} | $JQ -r '.properties.outputs | to_entries')
+else
+  OUTPUTS=$(az deployment show -n ${DEPLOYMENT_NAME} | $JQ -r '.properties.outputs | to_entries')
+fi
+
+length=$( $JQ '. | length' <<< $OUTPUTS )
+if [ ${length} -gt 0 ]
+then
+  echo "[INFO] Setting Nebula outputs ..."
+  KEYS=( $( $JQ -r ' {key: .[].key} | .["key"]' <<< $OUTPUTS))
+  VALUES=( $( $JQ -r ' {value: .[].value.value} | .["value"]' <<< $OUTPUTS))
+
+  # for i in $($SEQ length); do
+  END=$((length - 1))
+  for i in $(eval echo "{0..$END}"); do
+    echo "Setting output for ${KEYS[i]}"
+    $NI output set --key "${KEYS[i]}" --value "${VALUES[i]}"
+  done
+fi
+
