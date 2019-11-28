@@ -103,6 +103,8 @@ if [ ${length} -gt 0 ]
 then
   echo "[INFO] Setting Nebula outputs ..."
   KEYS=( $( $JQ -r ' {key: .[].key} | .["key"]' <<< $OUTPUTS))
+
+  # TODO: This only applies to Strings, not Objects or Arrays
   VALUES=( $( $JQ -r ' {value: .[].value.value} | .["value"]' <<< $OUTPUTS))
 
   END=$((length - 1))
