@@ -21,6 +21,7 @@ done
 
 DIRECTORY=$(ni get -p {.directory})
 WORKSPACE=$(ni get -p {.workspace})
+COMMAND=$(ni get -p {.command})
 WORKSPACE_FILE=workspace.${WORKSPACE}.tfvars.json
 
 CREDENTIALS=$(ni get -p {.credentials})
