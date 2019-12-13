@@ -21,6 +21,8 @@ done
 
 DIRECTORY=$(ni get -p {.directory})
 WORKSPACE=$(ni get -p {.workspace})
+COMMAND=$(ni get -p {.command})
+[ "$COMMAND" ] || COMMAND="apply"
 WORKSPACE_FILE=workspace.${WORKSPACE}.tfvars.json
 
 CREDENTIALS=$(ni get -p {.credentials})
@@ -55,7 +57,7 @@ declare -a BACKEND_CONFIGS="( $( $NI get | $JQ -r 'try .backendConfig | to_entri
 terraform init ${BACKEND_CONFIGS[@]}
 terraform workspace new ${WORKSPACE}
 terraform workspace select ${WORKSPACE}
-terraform apply -auto-approve
+terraform ${COMMAND} -auto-approve
 
 keys=$(terraform output -json | jq -r '. | keys | .[]')
 for key in ${keys}; do
