@@ -30,16 +30,16 @@ ACTION="$( $NI get -p '{ .action }' )"
 [ -z "${ACTION}" ] && usage 'spec: please specify a value for `.action`, the name of the action to perform'
 [ -n "${ACTION}" ] && DH_ARGS+=( "${ACTION}" )
 
-DHURL="$( $NI get -p '{ .dhurl }' )"
-[ -z "${DHURL}" ] && usage 'spec: please specify a value for `.dhurl`, the DeployHub Server URL'
+DHURL="$( $NI get -p '{ .registry.url }' )"
+[ -z "${DHURL}" ] && usage 'spec: please specify a value for `.registry.url`, the DeployHub Server URL'
 [ -n "${DHURL}" ] && DH_ARGS+=( "--dhurl" ) && DH_ARGS+=( "${DHURL}" )
 
-DHUSER="$( $NI get -p '{ .dhuser }' )"
-[ -z "${DHUSER}" ] && usage 'spec: please specify a value for `.dhuser`, the DeployHub User Id'
+DHUSER="$( $NI get -p '{ .registry.username }' )"
+[ -z "${DHUSER}" ] && usage 'spec: please specify a value for `.registry.username`, the DeployHub User Id'
 [ -n "${DHUSER}" ] && DH_ARGS+=( "--dhuser" )  && DH_ARGS+=( "${DHUSER}" )
 
-DHPASS="$( $NI get -p '{ .dhpass }' )"
-[ -z "${DHPASS}" ] && usage 'spec: please specify a value for `.dhpass`, the DeployHub Password'
+DHPASS="$( $NI get -p '{ .registry.password }' )"
+[ -z "${DHPASS}" ] && usage 'spec: please specify a value for `.registry.password`, the DeployHub Password'
 [ -n "${DHPASS}" ] && DH_ARGS+=( "--dhpass" ) && DH_ARGS+=( "${DHPASS}" )
 
 APPNAME="$( $NI get -p '{ .appname }' )"
