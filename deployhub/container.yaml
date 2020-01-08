@@ -7,13 +7,4 @@ description: >
 settings:
   Image: python:3-alpine
   AdditionalCommands:
-  - pip install click qtoml requests PyYAML
-  - |
-    set -eux
-    mkdir -p /opt/deployhub/scripts/deployhub && \
-      cd /opt/deployhub/scripts/deployhub && \
-      curl -sL -o dhapi.py https://raw.githubusercontent.com/DeployHubProject/compupdate/master/deployhub/dhapi.py && \
-      curl -sL -o __init__.py https://raw.githubusercontent.com/DeployHubProject/compupdate/master/deployhub/__init__.py && \
-      cd /opt/deployhub/scripts && \
-      curl -sL -o dh https://raw.githubusercontent.com/DeployHubProject/compupdate/master/dh && \
-      chmod 755 dh
+  - pip install deployhub;

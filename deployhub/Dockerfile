@@ -12,8 +12,7 @@ RUN set -eux ; \
     cd - && \
     rm -fr /tmp/ni
 RUN apk --no-cache add bash ca-certificates curl git jq openssh && update-ca-certificates
-RUN ["/bin/bash", "-c", "pip install click qtoml requests PyYAML"]
-RUN ["/bin/bash", "-c", "set -eux\nmkdir -p /opt/deployhub/scripts/deployhub \u0026\u0026 \\\n  cd /opt/deployhub/scripts/deployhub \u0026\u0026 \\\n  curl -sL -o dhapi.py https://raw.githubusercontent.com/DeployHubProject/compupdate/master/deployhub/dhapi.py \u0026\u0026 \\\n  curl -sL -o __init__.py https://raw.githubusercontent.com/DeployHubProject/compupdate/master/deployhub/__init__.py \u0026\u0026 \\\n  cd /opt/deployhub/scripts \u0026\u0026 \\\n  curl -sL -o dh https://raw.githubusercontent.com/DeployHubProject/compupdate/master/dh \u0026\u0026 \\\n  chmod 755 dh\n"]
+RUN ["/bin/bash", "-c", "pip install deployhub;"]
 COPY "./step.sh" "/nebula/step-deployhub.sh"
 ENTRYPOINT []
 CMD ["/bin/bash", "/nebula/step-deployhub.sh"]

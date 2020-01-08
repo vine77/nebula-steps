@@ -73,6 +73,6 @@ COMPATTR="$( $NI get -p '{ .compattr }' )"
 ENVS="$( $NI get -p '{ .envs }' )"
 [ -n "${ENVS}" ] && DH_ARGS+=( "--envs" ) && DH_ARGS+=( "${ENVS}" )
 
-/opt/deployhub/scripts/dh "${DH_ARGS[@]}"
+dh "${DH_ARGS[@]}"
 
 ni log info "DeployHub ${ACTION} completed"
