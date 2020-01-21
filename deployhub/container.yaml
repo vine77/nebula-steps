@@ -1,0 +1,10 @@
+apiVersion: container/v1
+kind: StepContainer
+inherit: {from: sdk, name: bash.v1}
+title: DeployHub CLI
+description: >
+  This task performs DeployHub actions such as deploy and updatecomp.
+settings:
+  Image: python:3-alpine
+  AdditionalCommands:
+  - pip install deployhub;
