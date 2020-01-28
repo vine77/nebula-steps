@@ -1,0 +1,5 @@
+apiVersion: container/v1
+kind: StepContainerTemplate
+inherit: {from: sdk, name: bash.v1}
+settings:
+  Image: google/cloud-sdk:alpine
